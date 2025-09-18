@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '@products/services/products.service';
+import { ProductCarouselComponent } from '@products/components/product-carousel/product-carousel.component';
 
 @Component({
   selector: 'app-product-page',
-  imports: [],
+  imports: [ProductCarouselComponent],
   templateUrl: './product-page.component.html',
 })
 export class ProductPageComponent {
@@ -21,10 +22,4 @@ export class ProductPageComponent {
     loader: ({ request }) =>
       this.productsService.getProductByIdSlug(request.productIdSlug),
   });
-
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    console.log(this.productIdSlug);
-  }
 }
