@@ -12,8 +12,6 @@ import { ProductsService } from '@products/services/products.service';
 export class HomePageComponent {
   private readonly productsService = inject(ProductsService);
 
-  readonly products = signal<ProductsResponse[]>([]);
-
   readonly productResource = rxResource({
     request: () => ({}),
     loader: ({ request }) => {
