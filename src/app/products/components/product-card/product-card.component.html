@@ -4,7 +4,12 @@
   </figure>
   <div class="card-body">
     <h2 class="card-title font-montserrat text-accent text-lg">
-      {{ product().title }}
+      <a
+        class="link link-accent no-underline hover:underline cursor-pointer"
+        [routerLink]="['product', product().slug]"
+      >
+        {{ product().title }}
+      </a>
     </h2>
     <p>{{ product().description | slice : 0 : 70 }}...</p>
     <div class="card-actions justify-end">
