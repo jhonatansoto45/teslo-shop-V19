@@ -4,7 +4,7 @@ import {
   Product,
   ProductsResponse,
 } from '@products/interfaces/product.interface';
-import { count, Observable, of, tap } from 'rxjs';
+import { delay, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 const baseUrl = environment.baseUrl;
@@ -22,6 +22,7 @@ export class ProductsService {
   private readonly http = inject(HttpClient);
 
   private productsCache = new Map<string, ProductsResponse>();
+  private productCache = new Map<string, Product>();
 
   getProducts(options: Options): Observable<ProductsResponse> {
     const { limit = 9, offset = 0, gender = '' } = options;
@@ -47,8 +48,13 @@ export class ProductsService {
   }
 
   getProductByIdSlug(idSlug: string): Observable<Product> {
-    return this.http
-      .get<Product>(`${baseUrl}/products/${idSlug}`)
-      .pipe(tap((resp) => console.log(resp)));
+    if (this.productCache.has(idSlug)) {
+      return of(this.productCache.get(idSlug)!);
+    }
+
+    return this.http.get<Product>(`${baseUrl}/products/${idSlug}`).pipe(
+      tap((resp) => console.log(resp)),
+      tap((resp) => this.productCache.set(idSlug, resp))
+    );
   }
 }
