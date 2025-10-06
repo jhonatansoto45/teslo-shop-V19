@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -8,6 +9,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
+  private readonly authService = inject(AuthService);
+
   private readonly fb = inject(FormBuilder);
   readonly hasError = signal(false);
   readonly isPosting = signal(false);
@@ -20,7 +23,6 @@ export class LoginPageComponent {
   submit() {
     if (this.loginForm.invalid) {
       this.hasError.set(true);
-
       setTimeout(() => {
         this.hasError.set(false);
       }, 2000);
@@ -28,6 +30,9 @@ export class LoginPageComponent {
     }
 
     const { email = '', password = '' } = this.loginForm.value;
-    console.log({ email, password });
+
+    this.authService.login(email!, password!).subscribe((resp) => {
+      console.log(resp);
+    });
   }
 }
