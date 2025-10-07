@@ -20,7 +20,9 @@ export class AuthService {
 
   private readonly _authStatus = signal<AuthStatus>('checking');
   private readonly _user = signal<User | null>(null);
-  private readonly _token = signal<string | null>(localStorage.getItem('token'));
+  private readonly _token = signal<string | null>(
+    localStorage.getItem('token')
+  );
 
   readonly authStatus = computed<AuthStatus>(() => {
     if (this._authStatus() === 'checking') return 'checking';
@@ -50,6 +52,23 @@ export class AuthService {
       );
   }
 
+  register(
+    fullName: string,
+    email: string,
+    password: string
+  ): Observable<boolean> {
+    return this.http
+      .post<AuthResponse>(`${baseUrl}/auth/register`, {
+        fullName,
+        email,
+        password,
+      })
+      .pipe(
+        map((resp) => this.handleAuthSuccess(resp)),
+        catchError((err: any) => this.handleAuthError(err))
+      );
+  }
+
   checkStatus(): Observable<boolean> {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -59,6 +78,7 @@ export class AuthService {
 
     return this.http
       .get<AuthResponse>(`${baseUrl}/auth/check-status`, {
+        //! Interceptor
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
@@ -73,8 +93,7 @@ export class AuthService {
     this._authStatus.set('not-authenticated');
     this._user.set(null);
     this._token.set(null);
-    // TODO: revertir
-    // localStorage.removeItem('token');
+    localStorage.removeItem('token');
   }
 
   private handleAuthSuccess({ user, token }: AuthResponse) {
