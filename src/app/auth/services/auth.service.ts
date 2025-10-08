@@ -34,6 +34,8 @@ export class AuthService {
 
   readonly user = computed(() => this._user());
 
+  readonly isAdmin = computed(() => this._user()?.roles.includes('admin') ?? false);
+
   readonly token = computed(() => this._token());
 
   readonly checkStatusResource = rxResource({
