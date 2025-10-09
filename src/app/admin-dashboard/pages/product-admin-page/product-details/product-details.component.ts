@@ -4,6 +4,7 @@ import { ProductCarouselComponent } from '@products/components/product-carousel/
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '@utils/form-utils';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { ProductsService } from '@products/services/products.service';
 
 @Component({
   selector: 'product-details',
@@ -15,6 +16,7 @@ import { FormErrorLabelComponent } from '@shared/components/form-error-label/for
   templateUrl: './product-details.component.html',
 })
 export class ProductDetailsComponent implements OnInit {
+  private readonly productService = inject(ProductsService);
   private readonly fb = inject(FormBuilder);
 
   readonly productForm = this.fb.group({
@@ -78,7 +80,10 @@ export class ProductDetailsComponent implements OnInit {
           .map((tag) => tag.trim()) ?? [],
     };
 
-    console.log(productLike);
-    
+    this.productService
+      .updateProduct(this.product().id, productLike)
+      .subscribe((product) => {
+        console.log('Producto actualizado');
+      });
   }
 }
